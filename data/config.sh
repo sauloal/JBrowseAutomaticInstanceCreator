@@ -25,11 +25,17 @@ for CFG in ${DATA_DIR}*.cfg; do
     echo "FINISHED READING CONFIG ${CFG}"
 done
 
+echo "CREATING SECURITY"
+source data/secret.conf
+
+echo "LISTING FILES"
 ls ${JBROWSE_DATA}
 
-${JBROWSE}bin/generate-names.pl --safeMode -v --out ${JBROWSE_DATA} || true
+#${JBROWSE}bin/generate-names.pl --safeMode -v --out ${JBROWSE_DATA} || true
 
+echo "PRINTING CONFIG"
 cat ${JBROWSE}jbrowse.conf
+
 
 echo FINISHED CONFIG.SH
 
