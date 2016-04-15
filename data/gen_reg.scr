@@ -1,0 +1,120 @@
+#!/bin/bash
+set -xeu
+
+#Usage:
+#      flatfile-to-json.pl                                                         \
+#          ( --gff <GFF3 file> | --bed <BED file> | --gbk <GenBank file> )         \
+#          --trackLabel <track identifier>                                         \
+#          [ --trackType <JS Class> ]                                              \
+#          [ --out <output directory> ]                                            \
+#          [ --key <human-readable track name> ]                                   \
+#          [ --className <CSS class name for displaying features> ]                \
+#          [ --urltemplate "http://example.com/idlookup?id={id}" ]                 \
+#          [ --arrowheadClass <CSS class> ]                                        \
+#          [ --noSubfeatures ]                                                     \
+#          [ --subfeatureClasses '{ JSON-format subfeature class map }' ]          \
+#          [ --clientConfig '{ JSON-format style configuration for this track }' ] \
+#          [ --config '{ JSON-format extra configuration for this track }' ]       \
+#          [ --thinType <BAM -thin_type> ]                                         \
+#          [ --thicktype <BAM -thick_type>]                                        \
+#          [ --type <feature types to process> ]                                   \
+#          [ --nclChunk <chunk size for generated NCLs> ]                          \
+#          [ --compress ]                                                          \
+#          [ --sortMem <memory in bytes to use for sorting> ]                      \
+#          [ --maxLookback <maximum number of features to buffer in gff3 files> ]  \
+#          [ --nameAttributes "name,alias,id" ]                                    \
+
+
+function create_register_conf {
+    BN=$1
+    DN=$2
+    LBL=$3
+    CAT=$4
+
+
+    if [[ ! -e "${FILENAME}_data" ]]; then
+        if [[ "${FILENAME}" == *.gz ]]; then
+            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} <(gunzip -c ${FILENAME}) --config "{ \"metadata\": { \"category\": \"${CAT}\" } }" --trackType ${CANVAS_TYPE} --trackLabel "${LBL}" --out ${FILENAME}_data
+        else
+            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} ${FILENAME}              --config "{ \"metadata\": { \"category\": \"${CAT}\" } }" --trackType ${CANVAS_TYPE} --trackLabel "${LBL}" --out ${FILENAME}_data
+        fi
+    fi
+    
+    if [[ ! -d "${R_JSON}tracks" ]]; then
+        mkdir ${R_JSON}tracks
+    fi
+    
+    rm ${R_JSON}tracks/${LBL} 2>/dev/null || true
+    #ITAG2.3_assembly.gff3.sorted.gff3.gz_data/trackList.json
+    
+    ln -s ${R_FOLDER}${FILENAME}_data/tracks/${LBL}/ ${R_JSON}tracks/${LBL}
+    
+    #${JBROWSE}/bin/add-track-json.pl ${R_FOLDER}${FILENAME}_data/trackList.json ${JBROWSE_DATA}/trackList.json
+    #${JBROWSE}/bin/add-json.pl  ${JBROWSE_DATA}/trackList.json
+    
+    ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' >> ${TRACKS}
+    echo ""                                                                                          >> ${TRACKS}
+    #exit 1
+}
+
+function create_register_json {
+    BN=$1
+    DN=$2
+    LBL=$3
+    CAT=$4
+    
+    echo "[ tracks.${DN}${LBL}${CLS} ]"                    >> ${TRACKS}
+    echo "storeClass     = ${STORE_CLASS}"                 >> ${TRACKS}
+    echo "urlTemplate    = ../../${FILENAME}"              >> ${TRACKS}
+    echo "category       = ${CAT}"                         >> ${TRACKS}
+    echo "type           = ${CANVAS_TYPE}"                 >> ${TRACKS}
+    echo "key            = ${LBL}${KEY_EXT}"               >> ${TRACKS}
+    if [[ "${INDEX_EXT}" == "bai" ]]; then
+    echo "baiUrlTemplate = ../../${FILENAME}.${INDEX_EXT}" >> ${TRACKS}
+    fi
+    echo ""                                                >> ${TRACKS}
+    # metadata.Description = SNP/Coverage view of volvox-sorted.bam, simulated resequencing alignments.
+}
+
+
+function create_register {
+    echo ${FILENAME}
+
+    BN=$(basename ${FILENAME})
+    DN=$(dirname  ${FILENAME} | sed -s "s/${TYPE_DIR}\/*//")
+    LBL=${BN}
+    if [[ -f "${FILENAME}.nfo" ]]; then LBL=$(cat ${FILENAME}.nfo); fi
+    LBL=${LBL//./_}
+
+    CAT="${CATEGORY}"
+    if [[ "${DN}" != "" ]]; then
+        CAT="${CATEGORY} - ${DN}"
+    fi
+    
+    echo "BN '${BN}' DN '${DN}' LBL '${LBL}' CAT '${CAT}'"
+    if [[ -z "$AS_JSON" ]]; then
+        create_register_json "${BN}" "${DN}" "${LBL}" "${CAT}"
+    else
+        create_register_conf "${BN}" "${DN}" "${LBL}" "${CAT}"
+    fi
+}
+
+
+
+if [[ -f "${FILENAME}"              ]]; then
+    echo "FILE ${FILENAME} EXISTS"
+    if [[ ! -z "${INDEX_EXT}"           ]]; then
+        echo "HAS INDEX"
+        if [[ -f "${FILENAME}.${INDEX_EXT}" ]]; then
+            echo "${FILENAME} INDEX EXISTS"
+            create_register
+        else
+            echo "${FILENAME} INDEX DOES NOT EXISTS"
+        fi
+    else
+        echo "DOES NOT HAVE INDEX"
+        create_register
+    fi
+else
+    echo "FILE ${FILENAME} DOES NOT EXISTS"
+fi

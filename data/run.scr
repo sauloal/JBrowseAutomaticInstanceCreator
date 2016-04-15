@@ -1,0 +1,248 @@
+#!/bin/bash
+
+REF_DIR="ref"
+BAM_DIR="bam"
+GFF_DIR="gff"
+VCF_DIR="vcf"
+JSON_DIR="json"
+
+R_FOLDER=${DATA_DIR}${DB_NAME}/
+R_FOLDER_REF=${R_FOLDER}${REF_DIR}/
+R_FOLDER_BAM=${R_FOLDER}${BAM_DIR}/
+R_FOLDER_GFF=${R_FOLDER}${GFF_DIR}/
+R_FOLDER_VCF=${R_FOLDER}${VCF_DIR}/
+R_FOLDER_JSON=${R_FOLDER}${JSON_DIR}/
+R_JSON=${R_FOLDER_JSON}${DB_NAME}/
+R_FASTA=${R_FOLDER_REF}${REF}
+
+
+
+mkdir -p ${R_FOLDER_REF}  || true
+mkdir -p ${R_FOLDER_BAM}  || true
+mkdir -p ${R_FOLDER_GFF}  || true
+mkdir -p ${R_FOLDER_VCF}  || true
+mkdir -p ${R_FOLDER_JSON} || true
+
+#chmod 774 ${DATA_DIR}
+#chmod 775 ${R_FOLDER}
+#chmod 775 ${R_JSON}
+#chmod 775 ${TRACKS}
+
+
+#if [[ ! -e "$R_JSON" ]]; then
+#${JBROWSE}/bin/prepare-refseqs.pl \
+#    --fasta $R_FASTA \
+#    --out   $R_JSON
+#fi
+
+
+mkdir -p ${R_JSON} &>/dev/null || true
+
+find ${R_JSON} -type d -exec chmod 777 {} \; &>/dev/null
+
+echo "BASE FOLDER"
+ls ${R_FOLDER}
+
+echo "BASE FOLDER JSON"
+ls ${R_JSON}
+
+TRACKS=${R_JSON}tracks.conf
+TRACKLIST=${R_JSON}trackList.json
+
+id -u -n
+
+echo TRACKS ${TRACKS}
+#cat ${TRACKS} || true
+
+echo TRACKLIST ${TRACKLIST}
+#cat ${TRACKLIST} || true
+
+#chown root ${TRACKS}
+#chmod 664  ${TRACKS}
+rm -f ${TRACKS} || true
+
+
+if [[ ! -e "${R_FASTA}_data" ]]; then
+${JBROWSE}/bin/prepare-refseqs.pl \
+    --fasta ${R_FASTA} \
+    --out   ${R_FASTA}_data
+fi
+
+rm ${R_JSON}seq &>/dev/null || true
+
+ln -s ${R_FASTA}_data/seq ${R_JSON}seq
+
+#${JBROWSE}/bin/add-track-json.pl ${R_FASTA}_data/trackList.json ${JBROWSE_DATA}/trackList.json
+#cp ${R_FASTA}_data/trackList.json ${JBROWSE_DATA}/trackList.json
+
+${JBROWSE}/bin/json2conf.pl ${R_FASTA}_data/trackList.json > ${TRACKS}
+echo "" >> ${TRACKS}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+cd ${R_FOLDER}
+
+
+
+
+#storeClass: JBrowse/Store/SeqFeature/GFF3
+#type      : JBrowse/View/Track/CanvasFeatures
+#type      : CanvasFeatures
+GFFS=$(find ${GFF_DIR} -name '*.gff' -o -name '*.gff3' -o -name '*.gff.gz'  -o -name '*.gff3.gz' | sort)
+INDEX_EXT="tbi"
+CLS=""
+KEY_EXT=""
+TYPE_DIR=${GFF_DIR}
+STORE_CLASS="JBrowse/Store/SeqFeature/GFF3"
+STORE_CLASS="JBrowse/Store/SeqFeature/GFF3Tabix"
+CANVAS_TYPE="JBrowse/View/Track/CanvasVariants"
+CANVAS_TYPE="JBrowse/View/Track/CanvasFeatures"
+AS_JSON=1
+AS_JSON_TYPE="gff"
+CATEGORY="Annotation"
+for FILENAME in ${GFFS}; do
+    source ${DATA_DIR}/gen_reg.scr
+done
+
+
+#[ tracks . volvox_gtf ]
+#storeClass = JBrowse/Store/SeqFeature/GTF
+#urlTemplate = raw/volvox/volvox.gtf
+#type = CanvasFeatures
+#metadata.description = This is just all the features in the volvox.gtf test file, which like the volvox.gff3 file, is displayed directly from a web-accessible GTF file
+#category = Miscellaneous
+#key = GTF - volvox.gtf in-memory adaptor
+#style.label = transcript_id,gene_id
+
+
+VCFS=$(find ${VCF_DIR} -name '*.vcf' -o -name '*.vcf.gz' | sort)
+INDEX_EXT="tbi"
+CLS=""
+KEY_EXT=""
+TYPE_DIR=${VCF_DIR}
+STORE_CLASS="JBrowse/Store/SeqFeature/VCFTabix"
+CANVAS_TYPE="JBrowse/View/Track/CanvasVariants"
+CATEGORY="Variants"
+AS_JSON=""
+AS_JSON_TYPE=""
+for FILENAME in ${VCFS}; do
+    source ${DATA_DIR}/gen_reg.scr
+done
+
+
+
+
+BAMS=$(find ${BAM_DIR} -name '*.bam' | sort)
+INDEX_EXT="bai"
+TYPE_DIR=${BAM_DIR}
+STORE_CLASS="JBrowse/Store/SeqFeature/BAM"
+AS_JSON=""
+AS_JSON_TYPE=""
+for FILENAME in ${BAMS}; do
+    CANVAS_TYPE="JBrowse/View/Track/Alignments2"
+    CLS="BAM"
+    KEY_EXT=" - BAM"
+    CATEGORY="BAM - Reads"
+    source ${DATA_DIR}/gen_reg.scr
+
+    CANVAS_TYPE="JBrowse/View/Track/SNPCoverage"
+    CLS="COV"
+    KEY_EXT=" - Coverage"
+    CATEGORY="BAM - Coverate"
+    source ${DATA_DIR}/gen_reg.scr
+done
+
+cd -
+
+touch ${TRACKS}
+echo TRACKS ${TRACKS}
+cat ${TRACKS}
+
+
+
+
+
+
+
+
+
+S_PATH=${JBROWSE_DATA#${JBROWSE}}
+
+J_CONF=${JBROWSE}jbrowse.conf
+
+ls -la ${J_CONF}
+
+echo "[datasets.${DB_NAME}]"                           >> ${J_CONF}
+echo "url  = ?data=${S_PATH}${DB_NAME}/json/${DB_NAME}" >> ${J_CONF}
+echo "name = ${DB_NAME}"                               >> ${J_CONF}
+echo ""                                                >> ${J_CONF}
+
+
+mkdir -p ${R_JSON}names || true
+echo "{}" > ${R_JSON}names/meta.json
+echo "{}" > ${R_JSON}names/root.json
+echo "{}" > ${TRACKLIST}
+
+#${JBROWSE}bin/generate-names.pl --safeMode -v --out ${R_JSON}
+
+
+
+
+
+#biodb-to-json.pl -v --conf ${DATA_DIR}/volvox.json --out ${JBROWSE_DATA};
+#
+#cat ${DATA_DIR}/volvox/volvox_microarray.bw.conf       >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox_sine.bw.conf             >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox-sorted.bam.conf          >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox-sorted.bam.coverage.conf >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox-paired.bam.conf          >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox.vcf.conf                 >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox_fromconfig.conf          >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox.gff3.conf                >> ${JBROWSE_DATA}/tracks.conf
+#cat ${DATA_DIR}/volvox/volvox.gtf.conf                 >> ${JBROWSE_DATA}/tracks.conf
+#
+#${JBROWSE}/bin/add-json.pl '{ "dataset_id": "volvox", "include": [ "functions.conf" ] }' \
+#    ${JBROWSE_DATA}/trackList.json
+#cp ${DATA_DIR}/volvox/functions.conf                  ${JBROWSE_DATA}/functions.conf
+#
+#generate-names.pl --safeMode -v --out ${JBROWSE_DATA};
+#
+#if [ ! -e ${JBROWSE_DATA}/raw/volvox ]; then
+#    ln -s ${DATA_DIR}/volvox/ ${JBROWSE_DATA}/raw/volvox;
+#fi;
+#ln -sf ${DATA_DIR}/volvox.json ${JBROWSE_DATA}/raw/;
+
+
+
+
+
+
+#cp -ar $R_JSON $J_JSON
+#
+#gunzip -c \
+#      ${JBROWSE_DATA}/yeast_scaffolds/chr1.fa.gz \
+#      ${JBROWSE_DATA}/raw/yeast_scaffolds/chr2.fa.gzip \
+#    > ${JBROWSE_DATA}/raw/yeast_chr1+2/yeast.fa;
+#
+#bin/biodb-to-json.pl \
+#    --conf ${JBROWSE_DATA}/raw/${DB_NAME}.json \
+#    --out  ${JBROWSE_DATA}/json/${DB_NAME}/;
+#
+#bin/add-json.pl \
+#    '{ "dataset_id": "'${DB_NAME}'" }' \
+#    ${JBROWSE_DATA}/json/${DB_NAME}/trackList.json
+#
+#bin/generate-names.pl --dir ${JBROWSE_DATA}/json/${DB_NAME}/;
+
+
