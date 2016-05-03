@@ -1,1 +1,7 @@
 *.json
+*.diff
+data/*.cfg
+dockerfile/
+run_bionano.sh
+run_httpd.sh
+

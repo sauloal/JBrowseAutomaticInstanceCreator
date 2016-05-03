@@ -25,44 +25,69 @@ set -xeu
 #          [ --nameAttributes "name,alias,id" ]                                    \
 
 
-function create_register_conf {
-    BN=$1
-    DN=$2
-    LBL=$3
-    CAT=$4
+function create_register_json {
+    CLS=$1
+    KEY_EXT=$2
+    TYPE_DIR=$3
+    STORE_CLASS=$4
+    CANVAS_TYPE=$5
+    AS_JSON=$6
+    AS_JSON_TYPE=$7
+    CATEGORY=$8
+    FILENAME=$9
+    BN=$10
+    DN=$11
+    LBL=$12
+    CAT=$13
+    EXTRA=$14
 
+    CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
+
+    if [[ ! -z "${EXTRA}" ]]; then
+        CATJSON="${CATJSON}, ${EXTRA}"
+    fi
+
+    CATJSON="${CATJSON} }"
 
     if [[ ! -e "${FILENAME}_data" ]]; then
         if [[ "${FILENAME}" == *.gz ]]; then
-            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} <(gunzip -c ${FILENAME}) --config "{ \"metadata\": { \"category\": \"${CAT}\" } }" --trackType ${CANVAS_TYPE} --trackLabel "${LBL}" --out ${FILENAME}_data
+            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} <(gunzip -c "${FILENAME}") --config "${CATJSON}" --trackType "${CANVAS_TYPE}" --trackLabel "${LBL}" --out "${FILENAME}_data"
         else
-            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} ${FILENAME}              --config "{ \"metadata\": { \"category\": \"${CAT}\" } }" --trackType ${CANVAS_TYPE} --trackLabel "${LBL}" --out ${FILENAME}_data
+            ${JBROWSE}bin/flatfile-to-json.pl --${AS_JSON_TYPE} "${FILENAME}"              --config "${CATJSON}" --trackType "${CANVAS_TYPE}" --trackLabel "${LBL}" --out "${FILENAME}_data"
         fi
     fi
-    
+
     if [[ ! -d "${R_JSON}tracks" ]]; then
         mkdir ${R_JSON}tracks
     fi
-    
-    rm ${R_JSON}tracks/${LBL} 2>/dev/null || true
-    #ITAG2.3_assembly.gff3.sorted.gff3.gz_data/trackList.json
-    
-    ln -s ${R_FOLDER}${FILENAME}_data/tracks/${LBL}/ ${R_JSON}tracks/${LBL}
-    
+
+    rm ${R_JSON}tracks/${DN}_${BN} 2>/dev/null || true
+
+    ln -s ${R_FOLDER}${FILENAME}_data/tracks/${DN}_${BN}/ ${R_JSON}tracks/${DN}_${BN}
+
     #${JBROWSE}/bin/add-track-json.pl ${R_FOLDER}${FILENAME}_data/trackList.json ${JBROWSE_DATA}/trackList.json
     #${JBROWSE}/bin/add-json.pl  ${JBROWSE_DATA}/trackList.json
-    
+
     ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' >> ${TRACKS}
     echo ""                                                                                          >> ${TRACKS}
-    #exit 1
 }
 
-function create_register_json {
-    BN=$1
-    DN=$2
-    LBL=$3
-    CAT=$4
-    
+function create_register_conf {
+    CLS=$1
+    KEY_EXT=$2
+    TYPE_DIR=$3
+    STORE_CLASS=$4
+    CANVAS_TYPE=$5
+    AS_JSON=$6
+    AS_JSON_TYPE=$7
+    CATEGORY=$8
+    FILENAME=$9
+    BN=$10
+    DN=$11
+    LBL=$12
+    CAT=$13
+    EXTRA=$14
+
     echo "[ tracks.${DN}${LBL}${CLS} ]"                    >> ${TRACKS}
     echo "storeClass     = ${STORE_CLASS}"                 >> ${TRACKS}
     echo "urlTemplate    = ../../${FILENAME}"              >> ${TRACKS}
@@ -72,49 +97,76 @@ function create_register_json {
     if [[ "${INDEX_EXT}" == "bai" ]]; then
     echo "baiUrlTemplate = ../../${FILENAME}.${INDEX_EXT}" >> ${TRACKS}
     fi
+    if [[ ! -z "${EXTRA}" ]]; then
+    echo "${EXTRA}"                                        >> ${TRACKS}
+    fi
     echo ""                                                >> ${TRACKS}
     # metadata.Description = SNP/Coverage view of volvox-sorted.bam, simulated resequencing alignments.
 }
 
 
-function create_register {
-    echo ${FILENAME}
+function parse_register {
+    CLS=$1
+    KEY_EXT=$2
+    TYPE_DIR=$3
+    STORE_CLASS=$4
+    CANVAS_TYPE=$5
+    AS_JSON=$6
+    AS_JSON_TYPE=$7
+    CATEGORY=$8
+    FILENAME=$9
+
+    echo FILENAME ${FILENAME}
 
     BN=$(basename ${FILENAME})
     DN=$(dirname  ${FILENAME} | sed -s "s/${TYPE_DIR}\/*//")
-    LBL=${BN}
-    if [[ -f "${FILENAME}.nfo" ]]; then LBL=$(cat ${FILENAME}.nfo); fi
-    LBL=${LBL//./_}
 
     CAT="${CATEGORY}"
     if [[ "${DN}" != "" ]]; then
         CAT="${CATEGORY} - ${DN}"
     fi
-    
+
+    LBL=${BN}
+    EXTRA=""
+    if [[ -f "${FILENAME}.nfo" ]]; then source ${FILENAME}.nfo; fi
+
     echo "BN '${BN}' DN '${DN}' LBL '${LBL}' CAT '${CAT}'"
-    if [[ -z "$AS_JSON" ]]; then
-        create_register_json "${BN}" "${DN}" "${LBL}" "${CAT}"
+
+    if [[ -z "${AS_JSON}" ]]; then
+        create_register_json "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}"
     else
-        create_register_conf "${BN}" "${DN}" "${LBL}" "${CAT}"
+        create_register_conf "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}"
     fi
 }
 
 
+#create_register "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
+function create_register {
+    CLS=$1
+    KEY_EXT=$2
+    TYPE_DIR=$3
+    STORE_CLASS=$4
+    CANVAS_TYPE=$5
+    AS_JSON=$6
+    AS_JSON_TYPE=$7
+    CATEGORY=$8
+    FILENAME=$9
 
-if [[ -f "${FILENAME}"              ]]; then
-    echo "FILE ${FILENAME} EXISTS"
-    if [[ ! -z "${INDEX_EXT}"           ]]; then
-        echo "HAS INDEX"
-        if [[ -f "${FILENAME}.${INDEX_EXT}" ]]; then
-            echo "${FILENAME} INDEX EXISTS"
-            create_register
+    if [[ -f "${FILENAME}"              ]]; then
+        echo "FILE ${FILENAME} EXISTS"
+        if [[ ! -z "${INDEX_EXT}"           ]]; then
+            echo "HAS INDEX"
+            if [[ -f "${FILENAME}.${INDEX_EXT}" ]]; then
+                echo "${FILENAME} INDEX EXISTS"
+                parse_register "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
+            else
+                echo "${FILENAME} INDEX DOES NOT EXISTS"
+            fi
         else
-            echo "${FILENAME} INDEX DOES NOT EXISTS"
+            echo "DOES NOT HAVE INDEX"
+            parse_register "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
         fi
     else
-        echo "DOES NOT HAVE INDEX"
-        create_register
+        echo "FILE ${FILENAME} DOES NOT EXISTS"
     fi
-else
-    echo "FILE ${FILENAME} DOES NOT EXISTS"
-fi
+}

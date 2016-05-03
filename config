@@ -1,0 +1,6 @@
+NAME=jbrowse_automatic_instance_creator
+VER=1.12.1
+IMG=jbrowse/gmod-jbrowse:${VER}
+
+PORT=8006
+

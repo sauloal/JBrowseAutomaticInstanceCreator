@@ -88,6 +88,8 @@ echo "" >> ${TRACKS}
 
 
 
+source ${DATA_DIR}/gen_reg.scr
+
 
 
 
@@ -100,7 +102,8 @@ cd ${R_FOLDER}
 #type      : JBrowse/View/Track/CanvasFeatures
 #type      : CanvasFeatures
 GFFS=$(find ${GFF_DIR} -name '*.gff' -o -name '*.gff3' -o -name '*.gff.gz'  -o -name '*.gff3.gz' | sort)
-INDEX_EXT="tbi"
+INDEX_EXT=
+#"tbi"
 CLS=""
 KEY_EXT=""
 TYPE_DIR=${GFF_DIR}
@@ -112,7 +115,7 @@ AS_JSON=1
 AS_JSON_TYPE="gff"
 CATEGORY="Annotation"
 for FILENAME in ${GFFS}; do
-    source ${DATA_DIR}/gen_reg.scr
+    create_register "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 done
 
 
@@ -159,7 +162,7 @@ for FILENAME in ${BAMS}; do
     CANVAS_TYPE="JBrowse/View/Track/SNPCoverage"
     CLS="COV"
     KEY_EXT=" - Coverage"
-    CATEGORY="BAM - Coverate"
+    CATEGORY="BAM - Coverage"
     source ${DATA_DIR}/gen_reg.scr
 done
 
@@ -183,10 +186,10 @@ J_CONF=${JBROWSE}jbrowse.conf
 
 ls -la ${J_CONF}
 
-echo "[datasets.${DB_NAME}]"                           >> ${J_CONF}
+echo "[datasets.${DB_NAME}]"                            >> ${J_CONF}
 echo "url  = ?data=${S_PATH}${DB_NAME}/json/${DB_NAME}" >> ${J_CONF}
-echo "name = ${DB_NAME}"                               >> ${J_CONF}
-echo ""                                                >> ${J_CONF}
+echo "name = ${DB_NAME}"                                >> ${J_CONF}
+echo ""                                                 >> ${J_CONF}
 
 
 mkdir -p ${R_JSON}names || true

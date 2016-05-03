@@ -22,6 +22,7 @@ mkdir -p ${JBROWSE_DATA} || true
 for CFG in ${DATA_DIR}*.cfg; do
     echo "READING CONFIG ${CFG}"
     bash ${CFG}
+    source ${DATA_DIR}run.scr
     echo "FINISHED READING CONFIG ${CFG}"
 done
 
