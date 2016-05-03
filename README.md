@@ -1,6 +1,6 @@
 ### 01. Clone repository
  ```bash
-git clone git@github.com:sauloal/JBroseAutomaticInstanceCreator.git
+git clone https://github.com/sauloal/JBroseAutomaticInstanceCreator.git
  ```
 
 ### 02. create and edit ```<PROJECT_NAME>.cfg```
