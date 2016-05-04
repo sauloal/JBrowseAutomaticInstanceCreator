@@ -174,14 +174,15 @@ LBL=Miraculous sample 1
 
 ### 09. run
  ``` ./run.sh ```
-  This will:
-    - once
-      + index and convert the reference fasta
-      + index and convert the gff file
-    - every time
-      + symlink the indexed fasta data
-      + symlink the indexed gff data
-      + crete .conf file for JBrowse with all the data found
+
+This will:
+* first time
+  * index and convert the reference fasta
+  * index and convert the gff file
+* every time
+  * symlink the indexed fasta data
+  * symlink the indexed gff data
+  * create .conf file for JBrowse with all the data found
 
 
 ### 10. open your browser at
