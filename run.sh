@@ -16,5 +16,5 @@ docker run --rm -it            \
 --env "INST_NAME=${NAME}"      \
 -v ${PWD}/data/:/jbrowse/data/ \
 -v ${PWD}/data/:/data/         \
--p ${PORT}:80 ${IMG} $@
+-p ${PORT}:80 ${IMG} $@        | tee -a runs.log
 

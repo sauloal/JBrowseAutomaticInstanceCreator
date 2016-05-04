@@ -107,15 +107,22 @@ INDEX_EXT=
 CLS=""
 KEY_EXT=""
 TYPE_DIR=${GFF_DIR}
+
+## IF JBROWSE <= 1.12.1
 STORE_CLASS="JBrowse/Store/SeqFeature/GFF3"
-STORE_CLASS="JBrowse/Store/SeqFeature/GFF3Tabix"
 CANVAS_TYPE="JBrowse/View/Track/CanvasVariants"
-CANVAS_TYPE="JBrowse/View/Track/CanvasFeatures"
 AS_JSON=1
 AS_JSON_TYPE="gff"
+
+## IF JBROWSE > 1.12.1
+#STORE_CLASS="JBrowse/Store/SeqFeature/GFF3Tabix"
+#CANVAS_TYPE="JBrowse/View/Track/CanvasFeatures"
+#AS_JSON=0
+#AS_JSON_TYPE=""
+
 CATEGORY="Annotation"
 for FILENAME in ${GFFS}; do
-    create_register "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
+    create_register "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 done
 
 
@@ -137,10 +144,10 @@ TYPE_DIR=${VCF_DIR}
 STORE_CLASS="JBrowse/Store/SeqFeature/VCFTabix"
 CANVAS_TYPE="JBrowse/View/Track/CanvasVariants"
 CATEGORY="Variants"
-AS_JSON=""
+AS_JSON=0
 AS_JSON_TYPE=""
 for FILENAME in ${VCFS}; do
-    source ${DATA_DIR}/gen_reg.scr
+    create_register "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 done
 
 
@@ -150,20 +157,20 @@ BAMS=$(find ${BAM_DIR} -name '*.bam' | sort)
 INDEX_EXT="bai"
 TYPE_DIR=${BAM_DIR}
 STORE_CLASS="JBrowse/Store/SeqFeature/BAM"
-AS_JSON=""
+AS_JSON=0
 AS_JSON_TYPE=""
 for FILENAME in ${BAMS}; do
     CANVAS_TYPE="JBrowse/View/Track/Alignments2"
     CLS="BAM"
     KEY_EXT=" - BAM"
     CATEGORY="BAM - Reads"
-    source ${DATA_DIR}/gen_reg.scr
+    create_register "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 
     CANVAS_TYPE="JBrowse/View/Track/SNPCoverage"
     CLS="COV"
     KEY_EXT=" - Coverage"
     CATEGORY="BAM - Coverage"
-    source ${DATA_DIR}/gen_reg.scr
+    create_register "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 done
 
 cd -
