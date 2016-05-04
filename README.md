@@ -1,8 +1,8 @@
 ### 01. Clone repository and enter folder
 
  ```bash
-git clone git clone https://github.com/sauloal/JBroseAutomaticInstanceCreator.git \<INSTANCE NAME\>
-cd \<INSTANCE NAME\>
+git clone git clone https://github.com/sauloal/JBroseAutomaticInstanceCreator.git <INSTANCE NAME>
+cd <INSTANCE NAME>
  ```
 
 ### 02. edit ```config```
@@ -19,11 +19,11 @@ PORT=8006
 ```IMG```  = JBrowse Docker image name
 ```PORT``` = Port to run
 
-### 03. create and edit ```data/\<PROJECT_NAME\>.cfg```
+### 03. create and edit ```data/<PROJECT_NAME>.cfg```
 
  ```bash
-REF=\<REFERENCE FASTA NAME\>
-DB_NAME=\<PROJECT_NAME\>
+REF=<REFERENCE FASTA NAME>
+DB_NAME=<PROJECT_NAME>
 ```
 
 ### 04. (OPTIONAL) create/edit ```data/users.conf``` with usernames and passwords for access protection
@@ -35,28 +35,33 @@ UPASS=(pass1 pass2 pass3)
 
 ### 05. create a project folder as defined in the ```.cfg``` file
 
- ```mkdir data/\<PROJECT_NAME\>```
+ ```mkdir data/<PROJECT_NAME>```
 
-### 06. inside the ```data/\<PROJECT_NAME\>``` folder create folders:
+### 06. inside the ```data/<PROJECT_NAME>``` folder create folders:
 
- ``` ref ```  containing the fasta file as defined in ```data/\<PROJECT_NAME\>.cfg```
+ ``` ref ```  containing the fasta file as defined in ```data/<PROJECT_NAME>.cfg```
 
-  e.g.: ```data/\<PROJECT_NAME\>/ref/\<REFERENCE FASTA NAME\>```
+  e.g.: ```data/<PROJECT_NAME>/ref/<REFERENCE FASTA NAME>```
 
  ``` bam ```  containing bam and their index (.bam.bai) files (valid extensions: *.bam)
 
-  e.g.: ```
-    data/\<PROJECT_NAME\>/bam/data1.bam
-    data/\<PROJECT_NAME\>/bam/data1.bam.bai
-```
+  e.g.: 
+ ```bash
+data/\<PROJECT_NAME\>/bam/data1.bam
+data/\<PROJECT_NAME\>/bam/data1.bam.bai
+ ```
 
  ``` gff ```  containing GFF files (valid extensions: *.gff *.gff3 *.gff.gz *.gff3.gz)
 
-  e.g.: ```data/\<PROJECT_NAME\>/gff/data1.gff```
+  e.g.: 
+ ```
+data/\<PROJECT_NAME\>/gff/data1.gff
+```
 
  ``` vcf ```  VCF files and their index (.vcf.tbi or .vcf.gz.tbi) files (valid extensions: *.vcf  *.vcf.gz)
 
-  e.g.: ```
+  e.g.:
+ ```
 data/\<PROJECT_NAME\>/vcf/data1.vcf
 data/\<PROJECT_NAME\>/vcf/data1.vcf.tbi
 data/\<PROJECT_NAME\>/vcf/data2.vcf.gz
@@ -67,13 +72,13 @@ data/\<PROJECT_NAME\>/vcf/data1.vcf.gz.tbi
   
   e.g.: 
   
-    ``` gff/data1 ``` - creating the category ``` Annotation ``` and track ``` data1 ```
+  ``` gff/data1 ``` - creating the category ``` Annotation ``` and track ``` data1 ```
 
 
-    ``` gff/new/data1 ``` - creating the category ``` Annotation - new``` and track ``` data1 ```
+  ``` gff/new/data1 ``` - creating the category ``` Annotation - new``` and track ``` data1 ```
 
 
-    ``` gff/assembly/data1 ``` - creating the category ``` Annotation - assembly``` and track ``` data1 ```
+  ``` gff/assembly/data1 ``` - creating the category ``` Annotation - assembly``` and track ``` data1 ```
 
 
 ### 07. optionally, create a ```.nfo``` file for each data file containing extra parameters for the track.
@@ -128,42 +133,42 @@ LBL=Miraculous sample 1
 ### 08. The folder structure should look like this:
  ```bash
 # base system files
-\<INSTANCE NAME\>/config
-\<INSTANCE NAME\>/edit.sh
-\<INSTANCE NAME\>/fix_perm.sh
-\<INSTANCE NAME\>/run.sh
-\<INSTANCE NAME\>/LICENSE.md
-\<INSTANCE NAME\>/README.md
+<INSTANCE NAME>/config
+<INSTANCE NAME>/edit.sh
+<INSTANCE NAME>/fix_perm.sh
+<INSTANCE NAME>/run.sh
+<INSTANCE NAME>/LICENSE.md
+<INSTANCE NAME>/README.md
 
 # track scripts
-\<INSTANCE NAME\>/data/config.sh
-\<INSTANCE NAME\>/data/crypt.pl
-\<INSTANCE NAME\>/data/gen_reg.scr
-\<INSTANCE NAME\>/data/run.scr
-\<INSTANCE NAME\>/data/secret.conf
-\<INSTANCE NAME\>/data/users.conf
+<INSTANCE NAME>/data/config.sh
+<INSTANCE NAME>/data/crypt.pl
+<INSTANCE NAME>/data/gen_reg.scr
+<INSTANCE NAME>/data/run.scr
+<INSTANCE NAME>/data/secret.conf
+<INSTANCE NAME>/data/users.conf
 
 #project files
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>.cfg
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/ref/<REFERENCE>.fa
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/bam/
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/bam/data1.bam
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/bam/data1.bam.bai
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/bam/data1.bam.nfo
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/annotation/data1.gff
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/annotation/data1.gff.nfo
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/annotation/data1.gff3
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/annotation/data1.gff3.nfo
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/assembly/data1.gff
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/assembly/data1.gff.nfo
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/assembly/data1.gff3
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/gff/assembly/data1.gff3.nfo
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/vcf/
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/vcf/data1.vcf
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/vcf/data1.vcf.tbi
-\<INSTANCE NAME\>/data/\<PROJECT_NAME\>/vcf/data1.vcf.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>.cfg
+<INSTANCE NAME>/data/<PROJECT_NAME>/
+<INSTANCE NAME>/data/<PROJECT_NAME>/ref/<REFERENCE>.fa
+<INSTANCE NAME>/data/<PROJECT_NAME>/bam/
+<INSTANCE NAME>/data/<PROJECT_NAME>/bam/data1.bam
+<INSTANCE NAME>/data/<PROJECT_NAME>/bam/data1.bam.bai
+<INSTANCE NAME>/data/<PROJECT_NAME>/bam/data1.bam.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/annotation/data1.gff
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/annotation/data1.gff.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/annotation/data1.gff3
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/annotation/data1.gff3.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/assembly/data1.gff
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/assembly/data1.gff.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/assembly/data1.gff3
+<INSTANCE NAME>/data/<PROJECT_NAME>/gff/assembly/data1.gff3.nfo
+<INSTANCE NAME>/data/<PROJECT_NAME>/vcf/
+<INSTANCE NAME>/data/<PROJECT_NAME>/vcf/data1.vcf
+<INSTANCE NAME>/data/<PROJECT_NAME>/vcf/data1.vcf.tbi
+<INSTANCE NAME>/data/<PROJECT_NAME>/vcf/data1.vcf.nfo
 ```
 
 
@@ -181,4 +186,5 @@ LBL=Miraculous sample 1
 
 ### 10. open your browser at
  ``` http://<your ip address>:<port defined in config>```
+
  e.g.: ```http://127.0.0.1:8006```
