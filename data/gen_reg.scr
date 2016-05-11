@@ -46,14 +46,14 @@ function create_register_json {
 
     CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
 
-    #if [[ ! -z "${EXTRA}" ]]; then
-    #    CATJSON="${CATJSON}, ${EXTRA}"
-    #fi
+    if [[ ! -z "${EXTRA}" ]]; then
+        CATJSON="${CATJSON}, ${EXTRA}"
+    fi
 
     CATJSON="${CATJSON} }"
 
     if [[ ! -e "${FILENAME}_data" ]]; then
-        CMD="${JBROWSE}bin/flatfile-to-json.pl --config '"${CATJSON}"' --trackType \"${CANVAS_TYPE}\" --trackLabel \"${LBL}\" --out \"${R_FOLDER}${FILENAME}_data\" --${AS_JSON_TYPE}"
+        CMD="${JBROWSE}bin/flatfile-to-json.pl --config '"${CATJSON}"' --trackType \"${CANVAS_TYPE}\" --key \"${LBL}\" --trackLabel \"${DNC}_${BN}\" --out \"${R_FOLDER}${FILENAME}_data\" --${AS_JSON_TYPE}"
         #--urltemplate \"tracks/${DN}_${BN}/{refseq}/trackData.json\"
 
         if [[ "${FILENAME}" == *.gz ]]; then
@@ -61,7 +61,10 @@ function create_register_json {
         else
             CMD="${CMD} \"${FILENAME}\""
         fi
+
         bash -c "${CMD}"
+
+        #mv ${R_FOLDER}${FILENAME}_data/${LBL} ${R_FOLDER}${FILENAME}_data/${DNC}_${BN}
     fi
 
     if [[ ! -d "${R_JSON}tracks" ]]; then
@@ -70,16 +73,13 @@ function create_register_json {
 
     rm ${R_JSON}tracks/${DNC}_${BN} 2>/dev/null || true
 
-    ln -s ${R_FOLDER}${FILENAME}_data/tracks/${BN}/ ${R_JSON}tracks/${DNC}_${BN}
+    ln -s ${R_FOLDER}${FILENAME}_data/tracks/${DNC}_${BN}/ ${R_JSON}tracks/${DNC}_${BN}
 
     #${JBROWSE}/bin/add-track-json.pl ${R_FOLDER}${FILENAME}_data/trackList.json ${JBROWSE_DATA}/trackList.json
     #${JBROWSE}/bin/add-json.pl  ${JBROWSE_DATA}/trackList.json
 
-    ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' | sed "s/tracks\/${BN}/tracks\/${DNC}_${BN}/" >> ${TRACKS}
-    if [[ ! -z "${EXTRA}" ]]; then
-    echo "${EXTRA}"                                                                                                                                >> ${TRACKS}
-    fi
-    echo ""                                                                                                                                        >> ${TRACKS}
+    ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' >> ${TRACKS}
+    echo ""                                                                                          >> ${TRACKS}
 }
 
 function create_register_conf {
