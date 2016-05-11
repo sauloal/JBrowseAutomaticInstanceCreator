@@ -26,7 +26,7 @@ REF=<REFERENCE FASTA NAME>
 DB_NAME=<PROJECT_NAME>
 ```
 
-### 04. (OPTIONAL) create/edit ```data/users.conf``` with usernames and passwords for access protection
+### 04. remove or edit ```data/users.conf``` to disable/enable usernames and passwords access protection
 
  ``` bash
 USERS=(user1 user2 user3)
@@ -126,7 +126,8 @@ data/\<PROJECT_NAME\>/vcf/data1.vcf.gz.tbi
 
   e.g.:
  ```bash
-LBL=Miraculous sample 1
+LBL="Miraculous sample 1"
+EXTRA="style.color = red"
 ```
 
 
