@@ -11,10 +11,11 @@ docker stop ${NAME} || true
 docker rm   ${NAME} || true
 
 
-docker run --rm -it            \
---name ${NAME}                 \
---env "INST_NAME=${NAME}"      \
--v ${PWD}/data/:/jbrowse/data/ \
--v ${PWD}/data/:/data/         \
--p ${PORT}:80 ${IMG} $@        | tee -a runs.log
+docker run --rm -it                \
+--name ${NAME}                     \
+--env "INST_NAME=${NAME}"          \
+--env "INDEX_FILES=${INDEX_FILES}" \
+-v ${PWD}/data/:/jbrowse/data/     \
+-v ${PWD}/data/:/data/             \
+-p ${PORT}:80 ${IMG} $@            | tee -a runs.log
 

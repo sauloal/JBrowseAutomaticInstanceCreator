@@ -42,7 +42,10 @@ function create_register_json {
     CAT=${14}
     EXTRA=${15}
 
-    DNC=${DN//\//_}
+    DNC=${DN}
+    DNC=${DNC//\./_}
+    DNC=${DNC//\-/_}
+    DNC=${DNC//\//_}
 
     CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
 
@@ -101,8 +104,10 @@ function create_register_conf {
 
     UNAME="${CLS}_${DN}_${FILENAME}"
     UNAME=${UNAME//\./_}
+    UNAME=${UNAME//\-/_}
+    UNAME=${UNAME//\//_}
 
-    echo "[ tracks.${UNAME} ]"                             >> ${TRACKS}
+    echo "[ tracks . ${UNAME} ]"                           >> ${TRACKS}
     echo "storeClass     = ${STORE_CLASS}"                 >> ${TRACKS}
     echo "type           = ${CANVAS_TYPE}"                 >> ${TRACKS}
     echo "urlTemplate    = ../../${FILENAME}"              >> ${TRACKS}

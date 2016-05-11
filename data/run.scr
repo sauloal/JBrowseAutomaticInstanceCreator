@@ -36,6 +36,11 @@ mkdir -p ${R_FOLDER_JSON} || true
 #fi
 
 
+
+
+
+
+
 mkdir -p ${R_JSON} &>/dev/null || true
 
 find ${R_JSON} -type d -exec chmod 777 {} \; &>/dev/null
@@ -62,10 +67,19 @@ echo TRACKLIST ${TRACKLIST}
 rm -f ${TRACKS} || true
 
 
+
+
+
+
+FASTA_LABEL="DNA"
+FASTA_KEY="Reference sequence"
+
 if [[ ! -e "${R_FASTA}_data" ]]; then
 ${JBROWSE}/bin/prepare-refseqs.pl \
-    --fasta ${R_FASTA} \
-    --out   ${R_FASTA}_data
+    --fasta      ${R_FASTA}      \
+    --trackLabel ${FASTA_LABEL}  \
+    --key        ${FASTA_KEY}    \
+    --out        ${R_FASTA}_data
 fi
 
 rm ${R_JSON}seq &>/dev/null || true
@@ -75,8 +89,8 @@ ln -s ${R_FASTA}_data/seq ${R_JSON}seq
 #${JBROWSE}/bin/add-track-json.pl ${R_FASTA}_data/trackList.json ${JBROWSE_DATA}/trackList.json
 #cp ${R_FASTA}_data/trackList.json ${JBROWSE_DATA}/trackList.json
 
-${JBROWSE}/bin/json2conf.pl ${R_FASTA}_data/trackList.json > ${TRACKS}
-echo "" >> ${TRACKS}
+${JBROWSE}/bin/json2conf.pl ${R_FASTA}_data/trackList.json >  ${TRACKS}
+echo ""                                                    >> ${TRACKS}
 
 
 
@@ -136,6 +150,14 @@ done
 #style.label = transcript_id,gene_id
 
 
+
+
+
+
+
+
+
+
 VCFS=$(find ${VCF_DIR} -name '*.vcf' -o -name '*.vcf.gz' | sort)
 INDEX_EXT="tbi"
 CLS=""
@@ -149,6 +171,12 @@ AS_JSON_TYPE=""
 for FILENAME in ${VCFS}; do
     create_register "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}"
 done
+
+
+
+
+
+
 
 
 
@@ -175,9 +203,9 @@ done
 
 cd -
 
-touch ${TRACKS}
+touch       ${TRACKS}
 echo TRACKS ${TRACKS}
-cat ${TRACKS}
+cat         ${TRACKS}
 
 
 
@@ -199,12 +227,35 @@ echo "name = ${DB_NAME}"                                >> ${J_CONF}
 echo ""                                                 >> ${J_CONF}
 
 
-mkdir -p ${R_JSON}names || true
-echo "{}" > ${R_JSON}names/meta.json
-echo "{}" > ${R_JSON}names/root.json
-echo "{}" > ${TRACKLIST}
 
-#${JBROWSE}bin/generate-names.pl --safeMode -v --out ${R_JSON}
+INDEX_FILES="${INDEX_FILES:-0}"
+
+if [[ ! -z "${INDEX_FILES}" ]]; then
+    rm ${TRACKLIST} &/dev/null        || true
+    rm -rf ${R_JSON}names  &/dev/null || true
+
+    if [[ "${INDEX_FILES}" == "1" ]]; then
+        echo "INDEXING FILES"
+        cd ${R_JSON}
+        ln -s . data &>/dev/null || true
+        ${JBROWSE}bin/generate-names.pl --safeMode -v --hashBits 8 --completionLimit 0 --out ${R_JSON}
+        cd -
+    else
+        echo "NOT INDEXING FILES"
+    fi
+else
+    echo "NOT INDEXING FILES"
+    mkdir -p ${R_JSON}names &>/dev/null || true
+    echo "{}" > ${R_JSON}names/meta.json
+    echo "{}" > ${R_JSON}names/root.json
+    echo "{}" > ${TRACKLIST}
+fi
+
+
+
+
+
+
 
 
 
