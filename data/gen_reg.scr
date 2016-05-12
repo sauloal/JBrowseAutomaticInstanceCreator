@@ -82,6 +82,9 @@ function create_register_json {
     #${JBROWSE}/bin/add-json.pl  ${JBROWSE_DATA}/trackList.json
 
     ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' >> ${TRACKS}
+    if [[ ! -z "${EXTRA}" ]]; then
+    echo "${EXTRA}"                                                                                  >> ${TRACKS}
+    fi
     echo ""                                                                                          >> ${TRACKS}
 }
 
