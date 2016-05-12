@@ -14,15 +14,15 @@ INDEX_FILES=0
 PORT=8006
 ```
 
-*```NAME```*        = Docker instance name - change if more than one instance to be run
+**```NAME```**        = Docker instance name - change if more than one instance to be run
 
-*```VER```*         = JBrowse version (especifically, tag name of docker image)
+**```VER```**         = JBrowse version (especifically, tag name of docker image)
 
-*```IMG```*         = JBrowse Docker image name
+**```IMG```**         = JBrowse Docker image name
 
-*```INDEX_FILES```* = Run ```generate-names.pl``` to index gene names, allowing for search
+**```INDEX_FILES```** = Run ```generate-names.pl``` to index gene names, allowing for search
 
-*```PORT```*        = Port to run
+**```PORT```**        = Port to run
 
 ### 03. create and edit ```data/<PROJECT_NAME>.cfg```
 
@@ -44,11 +44,13 @@ UPASS=(pass1 pass2 pass3)
 
 ### 06. inside the ```data/<PROJECT_NAME>``` folder create folders:
 
- ``` ref ```  containing the fasta file as defined in ```data/<PROJECT_NAME>.cfg```
+#### ref
+ containing the fasta file as defined in ```data/<PROJECT_NAME>.cfg```
 
   e.g.: ```data/<PROJECT_NAME>/ref/<REFERENCE FASTA NAME>```
 
- ``` bam ```  containing bam and their index (.bam.bai) files (valid extensions: *.bam)
+#### bam
+ containing bam and their index (.bam.bai) files (valid extensions: *.bam)
 
   e.g.: 
  ```bash
@@ -56,14 +58,16 @@ data/\<PROJECT_NAME\>/bam/data1.bam
 data/\<PROJECT_NAME\>/bam/data1.bam.bai
  ```
 
- ``` gff ```  containing GFF files (valid extensions: *.gff *.gff3 *.gff.gz *.gff3.gz)
+#### gff
+ containing GFF files (valid extensions: *.gff *.gff3 *.gff.gz *.gff3.gz)
 
   e.g.: 
  ```
 data/\<PROJECT_NAME\>/gff/data1.gff
 ```
 
- ``` vcf ```  VCF files and their index (.vcf.tbi or .vcf.gz.tbi) files (valid extensions: *.vcf  *.vcf.gz)
+#### vcf
+ VCF files and their index (.vcf.tbi or .vcf.gz.tbi) files (valid extensions: *.vcf  *.vcf.gz)
 
   e.g.:
  ```
