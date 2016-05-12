@@ -126,9 +126,6 @@ TYPE_DIR=${GFF_DIR}
 STORE_CLASS="JBrowse/Store/SeqFeature/GFF3"
 CANVAS_TYPE="JBrowse/View/Track/CanvasFeatures"
 
-#STORE_CLASS="JBrowse/Store/SeqFeature/NCList"
-#CANVAS_TYPE="JBrowse/View/Track/HTMLFeatures"
-
 AS_JSON=1
 AS_JSON_TYPE="gff"
 

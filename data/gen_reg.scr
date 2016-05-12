@@ -49,7 +49,9 @@ function create_register_json {
     DNC=${DNC//\-/_}
     DNC=${DNC//\//_}
 
-    CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
+    CATC=${CAT//_/ }
+
+    CATJSON="{ \"metadata\": { \"category\": \"${CATC}\" }"
 
     if [[ ! -z "${EXTRAJ}" ]]; then
         CATJSON="${CATJSON}, ${EXTRAJ}"
@@ -91,9 +93,11 @@ function create_register_json {
 
     ${JBROWSE}/bin/json2conf.pl ${R_FOLDER}${FILENAME}_data/trackList.json | grep -v 'formatVersion' >> ${TRACKS}
     #echo "storeClass=${STORE_CLASS}"                                                                 >> ${TRACKS}
+
     if [[ ! -z "${EXTRA}" ]]; then
     echo "${EXTRA}"                                                                                  >> ${TRACKS}
     fi
+
     echo ""                                                                                          >> ${TRACKS}
 }
 
@@ -121,11 +125,13 @@ function create_register_conf {
     UNAME=${UNAME//\-/_}
     UNAME=${UNAME//\//_}
 
+    CATC=${CAT//_/ }
+
     echo "[ tracks . ${UNAME} ]"                           >> ${TRACKS}
     echo "storeClass     = ${STORE_CLASS}"                 >> ${TRACKS}
     echo "type           = ${CANVAS_TYPE}"                 >> ${TRACKS}
     echo "urlTemplate    = ../../${FILENAME}"              >> ${TRACKS}
-    echo "category       = ${CAT}"                         >> ${TRACKS}
+    echo "category       = ${CATC}"                        >> ${TRACKS}
     echo "key            = ${LBL}${KEY_EXT}"               >> ${TRACKS}
 
     if [[ "${INDEX_EXT}" == "bai" ]]; then

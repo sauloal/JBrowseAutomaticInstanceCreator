@@ -39,16 +39,56 @@ fi
 
 
 FN=ITAG2.3_assembly.gff3
-if [[ ! -f "data/tom2_40/gff/${FN}" ]]; then
-wget -O data/tom2_40/gff/${FN}.tmp ftp://ftp.solgenomics.net/genomes/Solanum_lycopersicum/annotation/ITAG2.3_release/${FN} && mv data/tom2_40/gff/${FN}.tmp data/tom2_40/gff/${FN}
+OPATH=data/tom2_40/gff
+mkdir -p ${OPATH} || true
+if [[ ! -f "${OPATH}/${FN}" ]]; then
+wget -O ${OPATH}/${FN}.tmp ftp://ftp.solgenomics.net/genomes/Solanum_lycopersicum/annotation/ITAG2.3_release/${FN} && mv ${OPATH}/${FN}.tmp ${OPATH}/${FN}
 fi
 
-FN=ITAG2.3_sgn_data.gff3
-if [[ ! -f "data/tom2_40/gff/${FN}" ]]; then
-mkdir -p data/tom2_40/gff/ITAG/ &>/dev/null || true
-wget -O data/tom2_40/gff/ITAG/${FN}.tmp ftp://ftp.solgenomics.net/genomes/Solanum_lycopersicum/annotation/ITAG2.3_release/${FN} && \
-mv data/tom2_40/gff/ITAG/${FN}.tmp data/tom2_40/gff/ITAG/${FN}
+echo -e 'LBL="Assembly - All"' > ${OPATH}/${FN}.nfo
+
+(TYPE=remark     ; TN="Remarks"      ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Assembly - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=supercontig; TN="Super Contig" ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Assembly - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=ultracontig; TN="Ultra Contigs"; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Assembly - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+
+
+
+
+
+FN=ITAG2.3_gene_models.gff3
+OPATH=data/tom2_40/gff/Gene_Models
+mkdir -p ${OPATH} || true
+if [[ ! -f "${OPATH}/${FN}" ]]; then
+wget -O ${OPATH}/${FN}.tmp ftp://ftp.solgenomics.net/genomes/Solanum_lycopersicum/annotation/ITAG2.3_release/${FN} && mv ${OPATH}/${FN}.tmp ${OPATH}/${FN}
 fi
+
+echo 'LBL="Gene Models - All"' > ${OPATH}/${FN}.nfo
+
+(TYPE=gene           ; TN="Genes"  ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=mRNA           ; TN="mRNAs"  ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=exon           ; TN="Exons"  ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=CDS            ; TN="CDSs"   ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=intron         ; TN="Introns"; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=exon           ; TN="Exons"  ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=five_prime_UTR ; TN="5' UTR" ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+(TYPE=three_prime_UTR; TN="3' UTR" ; cd ${OPATH} && (ln -s ${FN} ${FN}_${TYPE}.gff3 || true) && echo -e 'LBL="Gene Models - '${TN}'"\nGFF_TYPE="'${TYPE}'"' > ${FN}_${TYPE}.gff3.nfo)
+
+
+
+
+
+
+
+FN=ITAG2.3_sgn_data.gff3
+OPATH=data/tom2_40/gff/ITAG
+mkdir -p ${OPATH} || true
+if [[ ! -f "${OPATH}/${FN}" ]]; then
+wget -O ${OPATH}/${FN}.tmp ftp://ftp.solgenomics.net/genomes/Solanum_lycopersicum/annotation/ITAG2.3_release/${FN} && \
+mv ${OPATH}/${FN}.tmp ${OPATH}/${FN}
+fi
+echo 'LBL="SGN Data"' > ${OPATH}/${FN}.nfo
+
+
 
 FN=S_lycopersicum_chromosomes.2.40.fa
 if [[ ! -f "data/tom2_40/ref/${FN}" ]]; then
