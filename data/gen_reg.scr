@@ -41,6 +41,8 @@ function create_register_json {
     LBL=${13}
     CAT=${14}
     EXTRA=${15}
+    EXTRAJ=${16}
+    GFF_TYPE=${17}
 
     DNC=${DN}
     DNC=${DNC//\./_}
@@ -49,14 +51,20 @@ function create_register_json {
 
     CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
 
-    #if [[ ! -z "${EXTRA}" ]]; then
-    #    CATJSON="${CATJSON}, ${EXTRA}"
-    #fi
+    if [[ ! -z "${EXTRAJ}" ]]; then
+        CATJSON="${CATJSON}, ${EXTRAJ}"
+    fi
 
     CATJSON="${CATJSON} }"
 
     if [[ ! -e "${FILENAME}_data" ]]; then
-        CMD="${JBROWSE}bin/flatfile-to-json.pl --config '"${CATJSON}"' --trackType \"${CANVAS_TYPE}\" --key \"${LBL}\" --trackLabel \"${DNC}_${BN}\" --out \"${R_FOLDER}${FILENAME}_data\" --${AS_JSON_TYPE}"
+        TYPE_STR=""
+
+        if [[ "${GFF_TYPE}" -ne "" ]]; then
+            TYPE_STR="--type \"${GFF_TYPE}\""
+        fi
+
+        CMD="${JBROWSE}bin/flatfile-to-json.pl --config '"${CATJSON}"' --trackType \"${CANVAS_TYPE}\" ${TYPE_STR} --key \"${LBL}\" --trackLabel \"${DNC}_${BN}\" --out \"${R_FOLDER}${FILENAME}_data\" --${AS_JSON_TYPE}"
         #--urltemplate \"tracks/${DN}_${BN}/{refseq}/trackData.json\"
 
         if [[ "${FILENAME}" == *.gz ]]; then
@@ -104,6 +112,8 @@ function create_register_conf {
     LBL=${13}
     CAT=${14}
     EXTRA=${15}
+    EXTRAJ=${16}
+    GFF_TYPE=${17}
 
     UNAME="${CLS}_${DN}_${FILENAME}"
     UNAME=${UNAME//\./_}
@@ -116,12 +126,15 @@ function create_register_conf {
     echo "urlTemplate    = ../../${FILENAME}"              >> ${TRACKS}
     echo "category       = ${CAT}"                         >> ${TRACKS}
     echo "key            = ${LBL}${KEY_EXT}"               >> ${TRACKS}
+
     if [[ "${INDEX_EXT}" == "bai" ]]; then
     echo "baiUrlTemplate = ../../${FILENAME}.${INDEX_EXT}" >> ${TRACKS}
     fi
+
     if [[ ! -z "${EXTRA}" ]]; then
     echo "${EXTRA}"                                        >> ${TRACKS}
     fi
+
     echo ""                                                >> ${TRACKS}
     # metadata.Description = SNP/Coverage view of volvox-sorted.bam, simulated resequencing alignments.
 }
@@ -151,14 +164,18 @@ function parse_register {
 
     LBL=${BN}
     EXTRA=""
+    EXTRAJ=""
+    GFF_TYPE=""
+
     if [[ -f "${FILENAME}.nfo" ]]; then source ${FILENAME}.nfo; fi
 
     echo "BN '${BN}' DN '${DN}' LBL '${LBL}' CAT '${CAT}'"
+    echo "LBL '${LBL}' EXTRA '${EXTRA}' GFF_TYPE '${GFF_TYPE}'"
 
     if [[ "${AS_JSON}" == "1" ]]; then
-        create_register_json "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}"
+        create_register_json "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}" "${EXTRAJ}" "${GFF_TYPE}"
     else
-        create_register_conf "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}"
+        create_register_conf "${INDEX_EXT}" "${CLS}" "${KEY_EXT}" "${TYPE_DIR}" "${STORE_CLASS}" "${CANVAS_TYPE}" "${AS_JSON}" "${AS_JSON_TYPE}" "${CATEGORY}" "${FILENAME}" "${BN}" "${DN}" "${LBL}" "${CAT}" "${EXTRA}" "${EXTRAJ}" "${GFF_TYPE}"
     fi
 }
 

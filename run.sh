@@ -3,6 +3,20 @@
 
 set -xeu
 
+
+if [[ ! -f "config"         ]]; then
+    echo "NO CONFIG. copying example"
+    if [[ ! -f "config.example" ]]; then
+        echo "COPYING EXAMPLE"
+        cp config.example config
+    else
+        echo "NO EXAMPLE. please create manually"
+        exit 1
+    fi
+else
+    echo "HAS CONFIG"
+fi
+
 source config
 
 #find . -type d -exec chmod 777 {} \; &>/dev/null
