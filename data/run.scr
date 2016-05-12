@@ -41,9 +41,9 @@ mkdir -p ${R_FOLDER_JSON} || true
 
 
 
-mkdir -p ${R_JSON} &>/dev/null || true
+mkdir -p ${R_JSON} || true
 
-find ${R_JSON} -type d -exec chmod 777 {} \; &>/dev/null
+find ${R_JSON} -type d -exec chmod 777 {} \;
 
 echo "BASE FOLDER"
 ls ${R_FOLDER}
@@ -82,7 +82,7 @@ ${JBROWSE}/bin/prepare-refseqs.pl \
     --out        ${R_FASTA}_data
 fi
 
-rm ${R_JSON}seq &>/dev/null || true
+rm ${R_JSON}seq || true
 
 ln -s ${R_FASTA}_data/seq ${R_JSON}seq
 
@@ -124,7 +124,11 @@ TYPE_DIR=${GFF_DIR}
 
 ## IF JBROWSE <= 1.12.1
 STORE_CLASS="JBrowse/Store/SeqFeature/GFF3"
-CANVAS_TYPE="JBrowse/View/Track/CanvasVariants"
+CANVAS_TYPE="JBrowse/View/Track/CanvasFeatures"
+
+#STORE_CLASS="JBrowse/Store/SeqFeature/NCList"
+#CANVAS_TYPE="JBrowse/View/Track/HTMLFeatures"
+
 AS_JSON=1
 AS_JSON_TYPE="gff"
 
@@ -231,13 +235,13 @@ echo ""                                                 >> ${J_CONF}
 INDEX_FILES="${INDEX_FILES:-0}"
 
 if [[ ! -z "${INDEX_FILES}" ]]; then
-    rm ${TRACKLIST} &/dev/null        || true
-    rm -rf ${R_JSON}names  &/dev/null || true
+    rm ${TRACKLIST}        || true
+    rm -rf ${R_JSON}names  || true
 
     if [[ "${INDEX_FILES}" == "1" ]]; then
         echo "INDEXING FILES"
         cd ${R_JSON}
-        ln -s . data &>/dev/null || true
+        ln -s . data || true
         ${JBROWSE}bin/generate-names.pl --safeMode -v --hashBits 8 --completionLimit 0 --out ${R_JSON}
         cd -
     else
@@ -245,7 +249,7 @@ if [[ ! -z "${INDEX_FILES}" ]]; then
     fi
 else
     echo "NOT INDEXING FILES"
-    mkdir -p ${R_JSON}names &>/dev/null || true
+    mkdir -p ${R_JSON}names || true
     echo "{}" > ${R_JSON}names/meta.json
     echo "{}" > ${R_JSON}names/root.json
     echo "{}" > ${TRACKLIST}
