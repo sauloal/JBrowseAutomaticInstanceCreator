@@ -19,6 +19,17 @@ echo "DATA_DIR    : ${DATA_DIR}"
 
 mkdir -p ${JBROWSE_DATA} || true
 
+
+
+if [[ -f "${DATA_DIR}jbrowse.conf.addons" ]]; then
+    echo "ADDING JBROWSE.CONF ADDONS"
+    cat ${DATA_DIR}jbrowse.conf.addons >> ${JBROWSE}jbrowse.conf
+else
+    echo "NO JBROWSE.CONF ADDONS"
+fi
+
+
+
 for CFG in ${DATA_DIR}*.cfg; do
     echo "READING CONFIG ${CFG}"
     source ${CFG}
