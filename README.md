@@ -5,19 +5,24 @@ git clone git clone https://github.com/sauloal/JBroseAutomaticInstanceCreator.gi
 cd <INSTANCE NAME>
  ```
 
-### 02. edit ```config```
+### 02. copy ```config.example``` to ```config```
  ```bash
 NAME=jbrowse_automatic_instance_creator
 VER=1.12.1
 IMG=jbrowse/gmod-jbrowse:${VER}
-
+INDEX_FILES=0
 PORT=8006
 ```
 
-```NAME``` = Docker instance name - change if more than one instance to be run
-```VER```  = JBrowse version (especifically, tag name of docker image)
-```IMG```  = JBrowse Docker image name
-```PORT``` = Port to run
+*```NAME```*        = Docker instance name - change if more than one instance to be run
+
+*```VER```*         = JBrowse version (especifically, tag name of docker image)
+
+*```IMG```*         = JBrowse Docker image name
+
+*```INDEX_FILES```* = Run ```generate-names.pl``` to index gene names, allowing for search
+
+*```PORT```*        = Port to run
 
 ### 03. create and edit ```data/<PROJECT_NAME>.cfg```
 
@@ -26,7 +31,7 @@ REF=<REFERENCE FASTA NAME>
 DB_NAME=<PROJECT_NAME>
 ```
 
-### 04. remove or edit ```data/users.conf``` to disable/enable usernames and passwords access protection
+### 04. create ```data/users.conf``` (an example can be found at ```data/users.conf.example```) to disable/enable usernames and passwords access protection
 
  ``` bash
 USERS=(user1 user2 user3)
@@ -86,12 +91,23 @@ data/\<PROJECT_NAME\>/vcf/data1.vcf.gz.tbi
   e.g.: for ```data1.vcf.gz``` create ```data1.vcf.gz.nfo```
 
   Available variables to be set are:
+  
+ ```
     LBL           = Pretty name for track
-    EXTRA         = Extra parameters to be added to the configuration file
+    EXTRA         = Extra parameters to be added to the CONF configuration file
                     GFF and Ref uses JSON
                     BAM and VCF uses CONF file
+                    e.g.: EXTRA="style.color = red"
+    EXTRAJ        = Extra parameters to be added to the JSON configuration file
+                    this will be added to a JSON string so it should start with a ","
+                    e.g.: EXTRAJ=", \"key_i_want\"= [0,1,2,3]"
+    GFF_TYPE      = GFF type for filtering
+                    added as the parameter --type to flatfile-to-json.pl 
+                    e.g.: GFF_TYPE="gene"
+```
 
   Available variables to be used are:
+ ```
     FILENAME      = current track file name
     BN            = basename of the current file
     DN            = subfolder name of the current file
@@ -122,7 +138,7 @@ data/\<PROJECT_NAME\>/vcf/data1.vcf.gz.tbi
     GFFS          = GFF files found
     VCFS          = VCF files found
     BAMS          = BAM files found
-
+ ```
 
   e.g.:
  ```bash
