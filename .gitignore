@@ -1,6 +1,8 @@
 *.json
 *.diff
 *.log
+config
+data/users.conf
 data/*.cfg
 dockerfile/
 run_bionano.sh

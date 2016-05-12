@@ -6,7 +6,7 @@ set -xeu
 
 if [[ ! -f "config"         ]]; then
     echo "NO CONFIG. copying example"
-    if [[ ! -f "config.example" ]]; then
+    if [[ -f "config.example" ]]; then
         echo "COPYING EXAMPLE"
         cp config.example config
     else

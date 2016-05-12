@@ -60,7 +60,7 @@ function create_register_json {
     if [[ ! -e "${FILENAME}_data" ]]; then
         TYPE_STR=""
 
-        if [[ "${GFF_TYPE}" -ne "" ]]; then
+        if [[ "${GFF_TYPE}" != "" ]]; then
             TYPE_STR="--type \"${GFF_TYPE}\""
         fi
 
