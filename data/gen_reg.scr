@@ -49,9 +49,9 @@ function create_register_json {
 
     CATJSON="{ \"metadata\": { \"category\": \"${CAT}\" }"
 
-    if [[ ! -z "${EXTRA}" ]]; then
-        CATJSON="${CATJSON}, ${EXTRA}"
-    fi
+    #if [[ ! -z "${EXTRA}" ]]; then
+    #    CATJSON="${CATJSON}, ${EXTRA}"
+    #fi
 
     CATJSON="${CATJSON} }"
 
