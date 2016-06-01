@@ -1,8 +1,0 @@
-NAME=jbrowse_automatic_instance_creator_test
-VER=1.12.1
-IMG=jbrowse/gmod-jbrowse:${VER}
-
-INDEX_FILES=0
-
-PORT=8007
-

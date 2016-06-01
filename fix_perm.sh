@@ -2,7 +2,7 @@
 
 set -xeu
 
-USER_UID=`id -u $USER`
+USER_ID=`id -u $USER`
 
-./run.sh chown -R -v ${USER_UID}:${USER_UID} /data$@
+./run.sh chown -R -v ${USER_ID}:${USER_ID} /data$@
 
