@@ -37,10 +37,13 @@ ls ${JBROWSE_DATA}
 echo "PRINTING CONFIG"
 cat ${JBROWSE}jbrowse.conf
 
+HAS_ID=${USER_ID:-}
 
-if [[ ! -z "${USER_ID}" ]]; then
-    echo "CORRECTING USER ID"
-    chown -R ${USER_ID}:${USER_ID} ${DATA_DIR} || true
+if [[ ! -z "${HAS_ID}" ]]; then
+    echo "CORRECTING USER ID ${USER_ID}"
+    chown -R ${USER_ID}:${USER_ID} ${DATA_DIR} &>/dev/null || true
+else
+    echo "NO USER ID SET"
 fi
 
 echo "FINISHED CONFIG.SH"

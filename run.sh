@@ -29,7 +29,7 @@ chmod 777 data
 
 docker run --rm -it                \
 --name ${NAME}                     \
---env "USER_UID=${USER_ID}"        \
+--env "USER_ID=${USER_ID}"         \
 --env "INST_NAME=${NAME}"          \
 --env "INDEX_FILES=${INDEX_FILES}" \
 -v ${PWD}/data/:/jbrowse/data/     \
