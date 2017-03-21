@@ -1,7 +1,8 @@
 ### 01. Clone repository and enter folder
 
  ```bash
-git clone git clone https://github.com/sauloal/JBrowseAutomaticInstanceCreator.git <INSTANCE NAME>
+git clone https://github.com/sauloal/JBrowseAutomaticInstanceCreator.git <INSTANCE NAME>
+
 cd <INSTANCE NAME>
  ```
 
