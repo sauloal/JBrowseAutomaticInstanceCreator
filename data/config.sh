@@ -9,6 +9,11 @@ echo "DATA_DIR    : ${DATA_DIR}"
 mkdir -p ${JBROWSE_DATA} || true
 
 
+if [[ -f "env" ]]; then
+    echo "UPDATING ENVIRONMENT WITH CUSTOM VARIABLES"
+    source ./env
+fi
+
 
 if [[ -f "${DATA_DIR}jbrowse.conf.addons" ]]; then
     echo "ADDING JBROWSE.CONF ADDONS"
